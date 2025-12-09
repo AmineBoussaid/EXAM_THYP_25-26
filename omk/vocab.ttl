@@ -40,14 +40,14 @@ ex:hasStudent a rdf:Property ;
     rdfs:range ex:Student ;
     rdfs:comment "Liste des étudiants inscrits à un cours."@fr .
 
-# evaluation liée à un étudiant
+# évaluation liée à un étudiant
 ex:forStudent a rdf:Property ;
     rdfs:label "forStudent"@fr ;
     rdfs:domain ex:Evaluation ;
     rdfs:range ex:Student ;
     rdfs:comment "Étudiant évalué."@fr .
 
-# evaluation liée à un cours
+# évaluation liée à un cours
 ex:forCourse a rdf:Property ;
     rdfs:label "forCourse"@fr ;
     rdfs:domain ex:Evaluation ;
@@ -68,7 +68,7 @@ ex:evalDate a rdf:Property ;
     rdfs:range xsd:date ;
     rdfs:comment "Date de l'évaluation."@fr .
 
-# code du cours (ex attr)
+# code du cours (attribut)
 ex:courseCode a rdf:Property ;
     rdfs:label "courseCode"@fr ;
     rdfs:domain ex:Course ;
