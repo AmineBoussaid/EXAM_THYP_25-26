@@ -24,58 +24,68 @@ ex:Instructor a rdfs:Class ;
     rdfs:comment "Un enseignant responsable d'un cours"@fr .
 
 ###
+# Propriétés communes : titre
+###
+ex:title a rdf:Property ;
+    rdfs:label "Title"@fr ;
+    rdfs:comment "Titre générique (cours, étudiant, évaluation...)"@fr ;
+    rdfs:domain rdfs:Resource ;
+    rdfs:range xsd:string .
+
+###
 # Propriétés
 ###
-# lien étudiant - cours (inscription)
+
+# lien étudiant → cours
 ex:enrolledIn a rdf:Property ;
     rdfs:label "enrolledIn"@fr ;
     rdfs:domain ex:Student ;
     rdfs:range ex:Course ;
     rdfs:comment "Relie un étudiant aux cours où il est inscrit."@fr .
 
-# liste d'étudiants d'un cours (inverse de enrolledIn)
+# inverse : cours → étudiants
 ex:hasStudent a rdf:Property ;
     rdfs:label "hasStudent"@fr ;
     rdfs:domain ex:Course ;
     rdfs:range ex:Student ;
     rdfs:comment "Liste des étudiants inscrits à un cours."@fr .
 
-# évaluation liée à un étudiant
+# evaluation → étudiant
 ex:forStudent a rdf:Property ;
     rdfs:label "forStudent"@fr ;
     rdfs:domain ex:Evaluation ;
     rdfs:range ex:Student ;
     rdfs:comment "Étudiant évalué."@fr .
 
-# évaluation liée à un cours
+# evaluation → cours
 ex:forCourse a rdf:Property ;
     rdfs:label "forCourse"@fr ;
     rdfs:domain ex:Evaluation ;
     rdfs:range ex:Course ;
     rdfs:comment "Cours concerné par l'évaluation."@fr .
 
-# note/valeur de l'évaluation
+# note/valeur
 ex:grade a rdf:Property ;
     rdfs:label "grade"@fr ;
     rdfs:domain ex:Evaluation ;
     rdfs:range xsd:decimal ;
     rdfs:comment "Valeur numérique de la note."@fr .
 
-# date de l'évaluation
+# date d'évaluation
 ex:evalDate a rdf:Property ;
     rdfs:label "evalDate"@fr ;
     rdfs:domain ex:Evaluation ;
     rdfs:range xsd:date ;
     rdfs:comment "Date de l'évaluation."@fr .
 
-# code du cours (attribut)
+# code du cours
 ex:courseCode a rdf:Property ;
     rdfs:label "courseCode"@fr ;
     rdfs:domain ex:Course ;
     rdfs:range xsd:string ;
-    rdfs:comment "Code ou identifiant du cours (ex: THYP101)."@fr .
+    rdfs:comment "Code du cours (THYP101, DEV202...)."@fr .
 
-# nom de l'étudiant
+# nom étudiant
 ex:studentName a rdf:Property ;
     rdfs:label "studentName"@fr ;
     rdfs:domain ex:Student ;

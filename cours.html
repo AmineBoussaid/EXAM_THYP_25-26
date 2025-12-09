@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des cours</title>
+</head>
+<body>
+    <h1>Liste des cours</h1>
+    
+    <input type="text" id="filterInput" placeholder="Filtrer les cours...">
+    
+    <div id="coursList"></div>
+
+    <script>
+        const API_URL = 'https://thyp-24-25.netlify.app/omeka/api';
+        
+        // Fonction pour récupérer la liste des cours depuis Omeka
+        async function getCours() {
+            try {
+                const response = await fetch(`${API_URL}/items?resource_class_label=Course`);
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Erreur lors de la récupération des cours:', error);
+                return [];
+            }
+        }
+        
+        // Fonction pour afficher la liste des cours
+        function showCours(cours) {
+            const coursList = document.getElementById('coursList');
+            coursList.innerHTML = '';
+            
+            cours.forEach(course => {
+                const courseDiv = document.createElement('div');
+                courseDiv.style.border = '1px solid #ccc';
+                courseDiv.style.margin = '10px';
+                courseDiv.style.padding = '10px';
+                
+                // 4.1 l'identifiant
+                const identifier = course['o:id'];
+                const identifierP = document.createElement('p');
+                identifierP.innerHTML = `<strong>Identifiant:</strong> ${identifier}`;
+                courseDiv.appendChild(identifierP);
+                
+                // 4.2 le titre
+                const title = course['dcterms:title'] ? course['dcterms:title'][0]['@value'] : 'Pas de titre';
+                const titleP = document.createElement('p');
+                titleP.innerHTML = `<strong>Titre:</strong> ${title}`;
+                courseDiv.appendChild(titleP);
+                
+                // 4.3 la liste des étudiants inscrits
+                const studentsP = document.createElement('p');
+                studentsP.innerHTML = '<strong>Étudiants inscrits:</strong>';
+                courseDiv.appendChild(studentsP);
+                
+                if (course['omk:hasStudent']) {
+                    const studentsList = document.createElement('ul');
+                    course['omk:hasStudent'].forEach(student => {
+                        const studentLi = document.createElement('li');
+                        studentLi.textContent = student['display_title'] || student['@id'];
+                        studentsList.appendChild(studentLi);
+                    });
+                    courseDiv.appendChild(studentsList);
+                } else {
+                    const noStudents = document.createElement('p');
+                    noStudents.textContent = 'Aucun étudiant inscrit';
+                    courseDiv.appendChild(noStudents);
+                }
+                
+                coursList.appendChild(courseDiv);
+            });
+        }
+        
+        // Fonction pour filtrer la liste des cours
+        function filterCours() {
+            const filterValue = document.getElementById('filterInput').value.toLowerCase();
+            const courseDivs = document.querySelectorAll('#coursList > div');
+            
+            courseDivs.forEach(div => {
+                const text = div.textContent.toLowerCase();
+                if (text.includes(filterValue)) {
+                    div.style.display = 'block';
+                } else {
+                    div.style.display = 'none';
+                }
+            });
+        }
+        
+        // Initialisation
+        document.getElementById('filterInput').addEventListener('input', filterCours);
+        
+        // Charger et afficher les cours au chargement de la page
+        getCours().then(cours => {
+            showCours(cours);
+        });
+    </script>
+</body>
+</html>
