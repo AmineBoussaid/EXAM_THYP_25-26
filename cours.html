@@ -3,6 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <title>Liste des cours</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        #coursList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        #coursList > div {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        #coursList > div p {
+            margin-bottom: 10px;
+        }
+        
+        #coursList > div strong {
+            color: #333;
+        }
+        
+        #coursList > div ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+        
+        #coursList > div ul li {
+            color: #666;
+        }
+    </style>
 </head>
 <body>
     <h1>Liste des cours</h1>
