@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des évaluations</title>
+</head>
+<body>
+    <h1>Liste des évaluations</h1>
+    
+    <h2>Enregistrer une évaluation</h2>
+    <form id="evalForm">
+        <label>Note: <input type="number" id="grade" required></label><br>
+        <label>Étudiant ID: <input type="number" id="studentId" required></label><br>
+        <label>Cours ID: <input type="number" id="courseId" required></label><br>
+        <label>Date: <input type="date" id="evalDate" required></label><br>
+        <button type="submit">Enregistrer</button>
+    </form>
+    
+    <h2>Liste des évaluations</h2>
+    <div id="evalsList"></div>
+
+    <script>
+        const API_URL = 'http://localhost/omeka-s/api';
+        
+        // Fonction pour enregistrer les évaluations des étudiants au cours avec l'API omk
+        async function setEval(grade, studentId, courseId, evalDate) {
+            try {
+                const response = await fetch(`${API_URL}/items`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "o:resource_class": {
+                            "o:id": 1
+                        },
+                        "omk:grade": [
+                            {
+                                "type": "literal",
+                                "property_id": 1,
+                                "@value": grade
+                            }
+                        ],
+                        "omk:forStudent": [
+                            {
+                                "type": "resource",
+                                "property_id": 2,
+                                "value_resource_id": studentId
+                            }
+                        ],
+                        "omk:forCourse": [
+                            {
+                                "type": "resource",
+                                "property_id": 3,
+                                "value_resource_id": courseId
+                            }
+                        ],
+                        "omk:evalDate": [
+                            {
+                                "type": "literal",
+                                "property_id": 4,
+                                "@value": evalDate
+                            }
+                        ]
+                    })
+                });
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Erreur lors de l\'enregistrement de l\'évaluation:', error);
+                return null;
+            }
+        }
+        
+        // Fonction pour afficher les évaluations des étudiants
+        async function showEval() {
+            try {
+                const response = await fetch(`${API_URL}/items?resource_class_label=Evaluation`);
+                const evaluations = await response.json();
+                
+                const evalsList = document.getElementById('evalsList');
+                evalsList.innerHTML = '';
+                
+                evaluations.forEach(evaluation => {
+                    const evalDiv = document.createElement('div');
+                    evalDiv.style.border = '1px solid #ccc';
+                    evalDiv.style.margin = '10px';
+                    evalDiv.style.padding = '10px';
+                    
+                    // 4.1 l'identifiant de l'évaluation
+                    const identifier = evaluation['o:id'];
+                    const identifierP = document.createElement('p');
+                    identifierP.innerHTML = `<strong>Identifiant:</strong> ${identifier}`;
+                    evalDiv.appendChild(identifierP);
+                    
+                    // 4.2 la note
+                    const grade = evaluation['omk:grade'] ? evaluation['omk:grade'][0]['@value'] : 'Pas de note';
+                    const gradeP = document.createElement('p');
+                    gradeP.innerHTML = `<strong>Note:</strong> ${grade}`;
+                    evalDiv.appendChild(gradeP);
+                    
+                    // 4.3 l'étudiant
+                    const studentP = document.createElement('p');
+                    if (evaluation['omk:forStudent']) {
+                        const student = evaluation['omk:forStudent'][0]['display_title'] || evaluation['omk:forStudent'][0]['@id'];
+                        studentP.innerHTML = `<strong>Étudiant:</strong> ${student}`;
+                    } else {
+                        studentP.innerHTML = '<strong>Étudiant:</strong> Pas d\'étudiant';
+                    }
+                    evalDiv.appendChild(studentP);
+                    
+                    // 4.4 Le cours
+                    const courseP = document.createElement('p');
+                    if (evaluation['omk:forCourse']) {
+                        const course = evaluation['omk:forCourse'][0]['display_title'] || evaluation['omk:forCourse'][0]['@id'];
+                        courseP.innerHTML = `<strong>Cours:</strong> ${course}`;
+                    } else {
+                        courseP.innerHTML = '<strong>Cours:</strong> Pas de cours';
+                    }
+                    evalDiv.appendChild(courseP);
+                    
+                    evalsList.appendChild(evalDiv);
+                });
+            } catch (error) {
+                console.error('Erreur lors de la récupération des évaluations:', error);
+            }
+        }
+        
+        // Gestion du formulaire
+        document.getElementById('evalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const grade = document.getElementById('grade').value;
+            const studentId = document.getElementById('studentId').value;
+            const courseId = document.getElementById('courseId').value;
+            const evalDate = document.getElementById('evalDate').value;
+            
+            await setEval(grade, studentId, courseId, evalDate);
+            await showEval();
+        });
+        
+        // Charger et afficher les évaluations au chargement de la page
+        showEval();
+    </script>
+</body>
+</html>
